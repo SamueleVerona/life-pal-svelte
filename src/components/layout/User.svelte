@@ -3,6 +3,8 @@
     import {auth} from '../../stores/authModule.js'
     import {push} from 'svelte-spa-router'
     import Dialog from '../base/Dialog.svelte';
+    import avatarUrl from '$lib/assets/avatar.webp';
+
 
     $:username = $userData.username;
     $:email = $userData.email;
@@ -51,7 +53,7 @@
                     <div class="inner-box flex flex-col mt-4 p-4">
                         <div class="avatar overflow-visible">
                             <div class="ring-accent ring-offset-base-100 w-32 rounded-full ring ring-offset-2 ">
-                              <img src="src\assets\avatar.webp" alt="profile" />
+                              <img src="{avatarUrl}" alt="profile" />
                             </div>
                         </div>
                         <span class="mt-4 text-center font-normal">Current</span>
@@ -89,11 +91,9 @@ show="{!!errorMessage}"
 submitText="{unsubText}"
 allConfirmed="{unsubFlag}"
 action={errorMessage ? 'delete' : ''}
-
 on:close="{()=> errorMessage = false}"
 on:confirmAction="{deleteAccount}" 
 />
-
 
 <style lang="scss">
     *{

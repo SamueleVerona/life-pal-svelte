@@ -3,7 +3,12 @@ import daisyui from "daisyui";
 import scrollbar from "tailwind-scrollbar";
 export default {
   content: ["./src/**/*.{html,js,svelte,ts}"],
-  safelist: ["bg-theme-day", "bg-theme-week", "bg-theme-month"],
+  safelist: [
+    "bg-theme-day",
+    "bg-theme-week",
+    "bg-theme-month",
+    "bg-theme-year",
+  ],
 
   theme: {
     extend: {
@@ -48,6 +53,7 @@ export default {
         "theme-day": "var(--theme-item-day)",
         "theme-week": "var(--theme-item-week)",
         "theme-month": "var(--theme-item-month)",
+        "theme-year": "var(--theme-item-year)",
       },
     },
   },

@@ -2,8 +2,10 @@
     import Card from '../../components/base/Card.svelte';
     import dateParser from '../../utils/utilities';
     import "cally";
+    import arrowUrl from '$lib/assets/play.png';
     export let dashboardView, open, goalSaved = false;
     export let chosenTimeSlot = '';
+
 
     
 
@@ -44,27 +46,17 @@ overflow-auto
 visible
 {!open ? 'h-0 opacity-0 invisible':'grow flex-1 '} ">
   {#if dashboardView === 'goals'}
-  <calendar-date class="cally border max-w-[50rem] h-1/2 bg-white rounded-t-2xl shadow-lg shadow-zinc-500 text-8xl w-[80%] md:w-1/2 pt-6 md:rounded-s-2xl md:rounded-e-none md:h-[60%] md:shadow-[-.5rem_0rem_2rem_rgba(0,0,0,0.2)]  sm:landscape:w-1/2 pt-6 
+  <calendar-date class="cally border max-w-[50rem] h-1/2 bg-white rounded-t-2xl shadow-lg shadow-zinc-500 text-7xl sm:text-8xl w-[80%] md:w-1/2 pt-6 md:rounded-s-2xl md:rounded-e-none md:h-[60%] md:shadow-[-.5rem_0rem_2rem_rgba(0,0,0,0.2)]  sm:landscape:w-1/2 pt-6 
   sm:landscape:rounded-s-2xl
   sm:landscape:rounded-e-none
   sm:landscape:h-[90%]
   sm:landscape:shadow-[-.5rem_0rem_1rem_rgba(0,0,0,0.2)]" min={lowestDate} on:change={handleSelection} >
-      <svg
-      aria-label="Previous"
-      slot="previous"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      >
-        <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-      </svg>
-      <svg
-        aria-label="Next"
-        slot="next"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-      </svg>
+      <div slot="previous" >
+      <img src="{arrowUrl}" class="rotate-[180deg] size-full" alt="">
+      </div>
+      <div slot="next">
+        <img src="{arrowUrl}" class=" size-full" alt="">
+      </div>
       <calendar-month class="cally-month" ></calendar-month>
   </calendar-date>
   {/if}

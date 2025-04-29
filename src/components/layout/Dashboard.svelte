@@ -4,6 +4,7 @@
   import {userData} from '../../stores/dataModule.js'
   import {onMount, onDestroy} from 'svelte'
   import { createEventDispatcher } from 'svelte';
+  import arrowUrl from '$lib/assets/down-arrow.png';
 
   export let dashboardView, newItemOpen;
   export let userIsAdmin = false;
@@ -219,23 +220,28 @@
     ? (selectedItems[itemIndex] = item)
     : selectedItems.push(item);
   }
+  
 
-let itemsBoolArr= [];
+  $:currItemsLength = itemsArray.length;
+  let itemsBoolArr= new Array(currItemsLength).fill(false);
 
   function handleSelected(item){
     const id = item.id;
     const itemExists = selectedItems.some(item=> item.id === id)
-
     const itemIndex = selectedItems.findIndex((itm) => itm.itemId === id);
 
 
-    if(itemExists) { selectedItems = selectedItems.filter(item => item.id !== id);
+    if(itemExists) { 
+      selectedItems = selectedItems.filter(item => item.id !== id);
       itemsBoolArr[itemIndex] = false
      }else{
       selectedItems.push(item);
-      itemsBoolArr.push(true)
+      // itemsBoolArr.push(true)
+      itemsBoolArr[itemIndex] = true
 
     } 
+
+    console.log(selectedItems);
   }
 
 let userIsConfirming = false;
@@ -318,21 +324,59 @@ function handleListEdit(e) {
 <section class="flex relative 
 origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
   <div class=" flex flex-col w-full h-full justify-between p-2">
-    <section class=" flex items-center relative mb-4 z-10 overflow-visible " role="" aria-label="filters"  on:click={handleTopControls} on:keydown={handleTopControls}>
+    <section class=" flex items-center relative mb-4 overflow-visible " role="" aria-label="filters"  on:click={handleTopControls} on:keydown={handleTopControls}>
       <div class="flex items-center overflow-visible">
-        <div class="selector cursor-pointer rounded-lg  bg-white  overflow-visible flex justify-center items-center relative shadow-lg  selector--primary dropdown dropdown-start" >
-          <button class="text-3xl py-3 px-4 font-semibold bg-white selector__option selector__option--selected rounded-lg" inert 
+        <div 
+        class="
+        selector 
+        z-10
+        cursor-pointer 
+        rounded-xl 
+        bg-white 
+        overflow-visible 
+        flex 
+        justify-center 
+        items-center 
+        relative 
+        shadow-md 
+        shadow-zinc-400/80
+        selector--primary 
+        dropdown 
+        dropdown-start" >
+          <button 
+          class="
+          h-20
+          block
+          text-4xl 
+          py-0
+          px-4 
+          font-semibold 
+          bg-white 
+          selector__option 
+          selector__option--selected 
+          rounded-xl" inert 
           >
           {primaryOptionSelected}
           </button>
-          <img class=" {primaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="/src/assets/imgs/down-arrow.png" alt="" inert>
+          <img class=" {primaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="{arrowUrl}" alt="" inert>
           {#if primaryFilterToggle}
             <ul 
-              class="selector__list selector__list--primary absolute top-16 w-max left-0 mt-1 bg-transparent  divide-y shadow-2xl shadow-stone-800/80 rounded-lg"
+              class="
+              selector__list 
+              selector__list--primary 
+              absolute 
+              top-20 
+              left-0 
+              w-max 
+              mt-1 
+              bg-transparent 
+              divide-y 
+              shadow-2xl 
+              shadow-stone-800/80 rounded-lg"
             >
               {#each primaryFilterOptions as option }
               <li
-                class="text-3xl font-normal text-zinc-800 pb-4 p-2 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg selector__option selector__option--primary  "
+                class="text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg selector__option selector__option--primary  "
               >
                 {option}
               </li>
@@ -343,21 +387,22 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
         </div>
         {#if secondaryFilterOptions.length >1 }
         <div
-          class="selector  cursor-pointer rounded-lg bg-white  ml-2 overflow-visible flex justify-center items-center relative shadow-lg selector--secondary dropdown dropdown-start"
+          class="selector  cursor-pointer rounded-xl bg-white  ml-2 overflow-visible flex justify-center items-center relative  shadow-md z-10
+        shadow-zinc-400/80 selector--secondary dropdown dropdown-start"
         >
-        <button class="selector__option selector__option--selected text-3xl py-3 px-4 font-semibold  hover:border-indigo-600 rounded-lg" inert> 
+        <button class="selector__option selector__option--selected  h-20 text-4xl py-3 px-4 font-semibold  hover:border-indigo-600 rounded-lg" inert> 
           {secondaryOptionSelected}
         </button>
-        <img class="{secondaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="/src/assets/imgs/down-arrow.png" alt="" inert>
+        <img class="{secondaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="{arrowUrl}" inert>
         {#if secondaryFilterToggle}
           <ul
-            class="selector__list selector__list--secondary absolute top-16 w-max left-0 mt-1 bg-transparent  divide-y shadow-2xl shadow-stone-800/80 rounded-lg max-h-[24rem] overflow-y-auto scrollbar-thin scrollbar-thumb-[rgba(98, 37, 253,1)] scrollbar-track-[rgba(95, 3, 255, 0)] {secondaryFilterOptions.length > 6 ? 'overflowing': ''}"
+            class="selector__list selector__list--secondary absolute top-20 w-max left-0 mt-1 bg-transparent  divide-y shadow-2xl shadow-stone-800/80 rounded-lg max-h-[24rem] overflow-y-auto scrollbar-thin scrollbar-thumb-[rgba(98, 37, 253,1)] scrollbar-track-[rgba(95, 3, 255, 0)] {secondaryFilterOptions.length > 6 ? 'overflowing': ''}"
             
           >
-            <li class="selector__option selector__option--secondary text-3xl font-normal text-zinc-800 pb-4 p-2 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg ">all</li>
+            <li class="selector__option selector__option--secondary text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg ">all</li>
             {#each secondaryFilterOptions as option}
               <li
-                class="selector__option selector__option--secondary text-3xl font-normal text-zinc-800 pb-4 p-2 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg"
+                class="selector__option selector__option--secondary text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg"
               >
                 {option}
               </li>
@@ -371,7 +416,19 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
       {#if !userIsAdmin && !requestsView}
         <button
           type="button"
-          class="btn text-3xl text-white btn-xl btn-accent btn--stats ml-2 shadow-lg hadow-stone-800/80  "
+          class="
+          btn 
+          h-20 
+          rounded-xl 
+          text-4xl
+          font-normal
+          text-info
+          btn-xl
+          bg-white 
+          btn--stats 
+          ml-2 
+          shadow-md 
+          shadow-zinc-400/80"
         >
           stats
         </button>
@@ -389,8 +446,17 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
           {/if}
         </div>
         {:else if itemsArray}
-          <ul class="relative z-0 gap-4 overflow-visible grid md:grid-cols-2 lg:grid-cols-3 
-          xl:grid-cols-4 duration-700 {statsToggled && !requestsView ? 'brightness-50 blur-3':'brightness-100'} " >
+          <ul 
+          class="
+          relative 
+          gap-4 
+          overflow-visible
+          grid 
+          md:grid-cols-2 
+          lg:grid-cols-3 
+          xl:grid-cols-4 
+          duration-700 
+          {statsToggled && !requestsView ? 'brightness-50 blur-3':''}" >
             {#each itemsArray as item,idx}
               <li  class="overflow-visible">
                 <Item
@@ -408,11 +474,21 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
                 <div slot="selector" >
                     {#if userIsEditing && userIsDeleting}
                     <input
-                      class="absolute bottom-0 right-0 w-full h-full z-200 rounded-xl brightness-90 
-                      appearance-none cursor-pointer duration-200
+                      class="
+                      absolute
+                      bottom-0
+                      right-0
+                      size-full 
+                      z-200
+                      rounded-xl 
+                      brightness-90 
+                      appearance-none
+                      cursor-pointer
+                      duration-200
                       bg-slate-600/30
                       checked:bg-checkbox-checked
                       checked:brightness-150
+                      checked:z-300
                       "
                      
                       type="checkbox"
@@ -428,37 +504,6 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
             {/each}
           </ul>
       {/if}
-    </section>
-    <section
-    class="flex flex-col items-center justify-center absolute z-100 right-2 md:right-4 top-1/2 -translate-y-[50.5%] bg-white rounded-2xl transition-all duration-700 transform-origin-right {statsToggled && !requestsView ? 'w-[98%]':'w-0'} h-[87%] md:h-[83%] shadow-xl shadow-[0rem_0rem_3rem_rgba(0,0,0,0.5)] "
-  >
-    <h2 class="text-left w-full ml-16 mt-8 text-7xl text-teal-900 leading-normal">My progress</h2>
-    <div class=" content-center items-center justify-center max-w-[90%] w-full grid grid-cols-1 md:grid-cols-2 md:grid-rows-[repeat(2, minmax(0, max-content))]  gap-4 align-center overflow-visible flex-1 h-[60%] px-6">
-
-      <div class="stat border m-auto  h-full w-full max-w-lg bg-indigo-400 shadow-xl text-white rounded-lg">
-        <div class="stat-title leading-normal text-5xl text-inherit font-semibold ">All time goals</div>
-        <div class="stat-value">{itemsArray.length}</div>
-        <div class="stat-desc text-3xl text-inherit font-semibold">21% more than last month</div>
-      </div>
-      <div class="stat m-auto h-full w-full max-w-lg bg-fuchsia-300 shadow-xl rounded-lg ">
-        <div class="stat-title leading-normal text-5xl font-semibold">Ongoing goals</div>
-        <div class="stat-value text-purple-900">{userStats.stringRate}</div>
-        <progress class="progress progress-primary w-56" value="{userStats.ongoingRate.slice(0,-1)}" max="100"></progress>
-        <div class="stat-desc text-2xl font-semibold text-purple-900">15% more than last month</div>
-      </div>
-      <div class="stat m-auto h-full w-full max-w-lg shadow-xl bg-emerald-300 text-teal-800  rounded-lg ">
-        <div class="stat-title leading-normal text-5xl text-inherit font-semibold">Completed goals</div>
-        <div class="stat-value">{userStats.successRate}</div>
-        <progress class="progress progress-primary w-56" value="{userStats.successRate.slice(0,-1)}" max="100"></progress>
-        <div class="stat-desc text-2xl font-semibold">15% more than last month</div>
-      </div>
-      <div class="stat m-auto  h-full w-full max-w-lg bg-rose-400 shadow-xl rounded-lg">
-        <div class="stat-title leading-normal text-5xl font-semibold">Failed goals</div>
-        <div class="stat-value text-rose-900">{userStats.failRate}</div>
-        <progress class="progress progress-primary w-56" value="{userStats.failRate.slice(0,-1)}" max="100"></progress>
-        <div class="stat-desc text-2xl text-rose-900 font-semibold">15% more than last month</div>
-      </div>
-    </div>
     </section>
   
     <section class="flex relative justify-end w-full p-4 overflow-visible" role="" aria-label="list controls" on:click={handleListEdit} on:keydown={handleListEdit} >
@@ -510,6 +555,75 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
     </section>
     
   </div>
+  <section
+  class="
+ 
+  flex 
+  flex-col 
+  items-center 
+  justify-center 
+  absolute 
+  right-4
+  top-[6.5rem] 
+  bg-white 
+  rounded-3xl 
+  transition-all 
+  duration-700 
+  transform-origin-right 
+  {statsToggled && !requestsView ? 'w-[98%]':'w-0 opacity-0'} 
+  h-[91%]
+   
+  md:h-[83%] 
+  shadow-md 
+  shadow-[0rem_.0rem_1rem_rgba(0,0,0,0.5)]
+  overflow-visible"
+  >
+    <h2 class="text-left min-h-max min-w-full w-full ml-40 mt-8 text-6xl text-zinc-900 font-semibold leading-normal">My progress</h2>
+    <div 
+    class="
+    w-[90%] 
+    max-w-[65rem] 
+    h-full
+    min-h-[80%]
+    m-20
+    justify-items-center 
+    items-center 
+    justify-center 
+    text-center
+    md:text-start
+    grid 
+    grid-cols-[minmax(0,75%)]
+    grid-rows-4 
+    md:grid-cols-2 
+    md:grid-rows-2  
+    gap-4 
+    overflow-visible 
+    ">
+      <div class="stat border m-auto size-full  bg-indigo-400 shadow-lg shadow-zinc-400 text-white rounded-3xl ">
+        <div class="stat-title leading-normal text-5xl text-inherit font-semibold">All time goals</div>
+        <div class="stat-value text-5xl">{$userData.userGoals.length}</div>
+        <div class="stat-desc whitespace-pre-line  text-4xl text-inherit font-semibold">21% more than last month</div>
+      </div>
+      <div class="stat m-auto size-full bg-fuchsia-300 shadow-lg shadow-zinc-400 rounded-3xl ">
+        <div class="stat-title leading-normal text-5xl font-semibold">Ongoing goals</div>
+        <div class="stat-value text-5xl text-purple-900">{userStats.stringRate}</div>
+        <progress class="progress  md:m-0 mx-auto  w-64 h-4 text-purple-900" value="{userStats.ongoingRate.slice(0,-1)}" max="100"></progress>
+        <div class="stat-desc text-4xl font-semibold text-purple-900">15% more than last month</div>
+      </div>
+      <div class="stat m-auto size-full shadow-lg shadow-zinc-400 bg-emerald-300 text-teal-800  rounded-3xl ">
+        <div class="stat-title leading-normal text-5xl text-inherit font-semibold">Completed goals</div>
+        <div class="stat-value text-5xl">{userStats.successRate}</div>
+        <progress class="progress  text-teal-900  md:m-0 mx-auto w-64 h-4" value="{userStats.successRate.slice(0,-1)}" max="100"></progress>
+        <div class="stat-desc text-4xl font-semibold">15% more than last month</div>
+      </div>
+      <div class="stat m-auto size-full bg-rose-400 shadow-lg shadow-zinc-400 rounded-3xl">
+        <div class="stat-title leading-normal text-5xl font-semibold">Failed goals</div>
+        <div class="stat-value text-rose-900 text-5xl">{userStats.failRate}</div>
+        <progress class="progress  text-rose-900 md:m-0 mx-auto  w-64 h-4" value="{userStats.failRate.slice(0,-1)}" max="100"></progress>
+        <div class="stat-desc text-4xl text-rose-900 font-semibold">15% more than last month</div>
+      </div>
+    </div>
+  </section>
   <Dialog
     show={userIsConfirming || errorMessage}
     errorMessage=

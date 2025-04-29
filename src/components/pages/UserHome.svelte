@@ -17,6 +17,7 @@ function handleView(view){
   dashboardView = view.detail;
 }
 let newItemToggle = false;
+let navbarToggle = true;
 
 $: expiredGoals = $userData.expiredGoals;
 
@@ -70,7 +71,7 @@ onMount(()=>{
 </script>
 
 
-<Navbar on:dashboardView={handleView}/>
+<Navbar toggle={navbarToggle} on:dashboardView={handleView}/>
 <div class="flex flex-col size-full">
     {#if dashboardView ==='settings'}
     <User/>
@@ -79,7 +80,55 @@ onMount(()=>{
       <Dashboard bind:maxItemsReached={maxItemsReached} {dashboardView} newItemOpen={newItemToggle} bind:userIsAdmin {currTimeSlot} />
       {#if !userIsAdmin}
       <NewItem {dashboardView} open={newItemToggle} bind:chosenTimeSlot={currTimeSlot}  /> 
-      <button disabled={maxItemsReached} class="btn text-blue-600 bg-white hover:bg-blue-600 hover:text-white  w-1/2 self-end text-4xl h-max py-4 mt-2 mb-2 mr-2 rounded-lg shadow-lg z-10 sm:landscape:min-h-max" on:click={()=> newItemToggle = !newItemToggle}>{newItemToggle ? 'close': 'New'}</button>
+      <div class="flex m-2 space-x-1">
+
+        <button 
+        class="
+        btn 
+        text-blue-600 
+        bg-white 
+        hover:bg-blue-600 
+        hover:text-white 
+        w-1/2 
+        self-end 
+        text-4xl 
+        h-max 
+        py-4 
+        rounded-xl 
+        shadow-lg
+        z-10 
+        sm:landscape:min-h-max
+        " 
+        on:click={()=> navbarToggle = !navbarToggle}
+        >
+          {navbarToggle ? 'Close Sidebar': 'Open Sidebar'}
+        </button>
+      
+        <button 
+        disabled={maxItemsReached} 
+        class="
+        btn 
+        text-blue-600 
+        bg-white 
+        hover:bg-blue-600 
+        hover:text-white 
+        w-1/2 
+        self-end 
+        text-4xl 
+        h-max 
+        py-4 
+        
+        rounded-xl 
+        shadow-lg
+        z-10 
+        sm:landscape:min-h-max
+        " 
+        on:click={()=> newItemToggle = !newItemToggle}
+        >
+          {newItemToggle ? 'close': 'New'}
+        </button>
+
+      </div>
       {/if}
     {/if}
 </div>

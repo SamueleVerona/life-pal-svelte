@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   export let item = {};
   export let hasExpired = false, isRequest, userIsEditing, timeInc, isAdmin;
     
@@ -18,10 +18,10 @@
     }
   }
   
-  const goalStartMs = new Date(item.started).getTime();
-  const goalCompMs = new Date(item.compDate).getTime();
-  const totalTime = goalCompMs - goalStartMs;
-  const elapsedTime = Date.now() - goalStartMs;
+  $:goalStartMs = new Date(item.started).getTime();
+  $:goalCompMs = new Date(item.compDate).getTime();
+  $:totalTime = goalCompMs - goalStartMs;
+  $:elapsedTime = Date.now() - goalStartMs;
 
   let timeLeft = '';
 
@@ -93,12 +93,24 @@
     })
   }
 
-  const bgColor = `bg-theme-${item.type}`
-  console.log(bgColor)
+  $:bgColor = `bg-theme-${item.type}`
+
 
 </script>
 
-<div class=" flex flex-col relative w-full max-h-max my-2  p-2 rounded-3xl shadow-md shadow-zinc-400/80 bg-[var(--theme-primary-light)] card {bgColor}" >
+<div 
+class="
+flex
+flex-col 
+relative 
+w-full 
+max-h-max 
+my-2 
+p-2 
+rounded-3xl 
+shadow-md 
+shadow-zinc-400/80 
+bg-[var(--theme-primary-light)] card {bgColor}" >
     <section class="card-title">
       <h2 class=" px-6 pb-2 my-2 text-white text-5xl leading-tight " >
         {

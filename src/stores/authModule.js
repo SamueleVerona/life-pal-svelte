@@ -83,7 +83,7 @@ function createAuthStore() {
       userData.getData("all");
       push("/home");
     },
-    async autoLogin() {
+    autoLogin() {
       const sessionToken = localStorage.getItem("sessionToken");
       const userToken = localStorage.getItem("userToken");
       const tokenExp = localStorage.getItem("tokenExp");
@@ -99,17 +99,19 @@ function createAuthStore() {
         this.logout();
       }, newTokenExp);
 
-      const authState = {
-        sessionToken,
-        userToken,
-        userIsAdmin: JSON.parse(isAdmin),
-        userIsLocked: JSON.parse(isLockedUser),
-        isAuth: true,
-      };
+      if (sessionToken && userToken) {
+        const authState = {
+          sessionToken,
+          userToken,
+          userIsAdmin: JSON.parse(isAdmin),
+          userIsLocked: JSON.parse(isLockedUser),
+          isAuth: true,
+        };
 
-      update((state) => ({ ...state, ...authState }));
-      userData.getData("all");
-      push("/home");
+        update((state) => ({ ...state, ...authState }));
+        userData.getData("all");
+        push("/home");
+      }
     },
     logout() {
       localStorage.removeItem("sessionToken");
