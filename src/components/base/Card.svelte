@@ -1,85 +1,85 @@
 <script >
-    import Dialog from './Dialog.svelte';
-    import {userData} from '../../stores/dataModule.js'
-    import { createEventDispatcher } from 'svelte';
-    export let chosenDate, displayedDate, timeSlot, isRequest;
+  import Dialog from './Dialog.svelte';
+  import {userData} from '../../stores/dataModule.js'
+  import { createEventDispatcher } from 'svelte';
+  export let chosenDate, displayedDate, timeSlot, isRequest;
 
-    const dispatch = createEventDispatcher();
-    $:inputDesc = "";
-    $:inputTitle = ''
-    $: completionDate = chosenDate;
-    let errorMessage = '';
-    
-    function handleActions() {
-        if (!inputTitle) {
-            return errorMessage = "You need a title first";
-        }
-        if (isRequest){ 
-            addRequest();
-        }else {
-            completionDate
-            ? addGoal()
-            : (errorMessage = "You also need a time slot");
-        }
-    }
-    
-    function closeDialog() {
-    errorMessage = "";
-    }
-    
-    const id =  Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-    
-    async function addRequest() {
-        try {
-            await userData.sendData({
-            type: "request",
-            data: {
-                id: id,
-                title: inputTitle.toUpperCase(),
-                desc: inputDesc ? inputDesc : "",
-                itemLabel: "pending",
-            },
-            })
-            inputTitle = '';
-            inputDesc = '';
+  const dispatch = createEventDispatcher();
+  $:inputDesc = "";
+  $:inputTitle = ''
+  $: completionDate = chosenDate;
+  let errorMessage = '';
 
-            dispatch("goalSaved", true);
-        } catch (err) {
-            console.log(err);
-        }
-    }
-    
-    async function addGoal() {
-        try {
-            await userData.sendData({
-                type: "goal",
-                data: {
-                    id: id,
-                    title: inputTitle.toUpperCase(),
-                    desc: inputDesc ? inputDesc : "",
-                    type: timeSlot,
-                    isCompleted: false,
-                    isFailed: false,
-                    started: Date.now(),
-                    compDate: completionDate,
-                    itemLabel: displayedDate,
-                },
-            })
+  function handleActions() {
+      if (!inputTitle) {
+          return errorMessage = "You need a title first";
+      }
+      if (isRequest){ 
+          addRequest();
+      }else {
+          completionDate
+          ? addGoal()
+          : (errorMessage = "You also need a time slot");
+      }
+  }
 
-            inputTitle = '';
-            inputDesc = '';
+  function closeDialog() {
+  errorMessage = "";
+  }
 
-            dispatch("goalSaved", true);
-        } catch (err) {
-            console.warn(err);
-        }
-    }
+  const id =  Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 
-    $:bgColor = timeSlot ? `bg-theme-${timeSlot}`: 'bg-violet-400'
+  async function addRequest() {
+      try {
+          await userData.sendData({
+          type: "request",
+          data: {
+              id: id,
+              title: inputTitle.toUpperCase(),
+              desc: inputDesc ? inputDesc : "",
+              itemLabel: "pending",
+          },
+          })
+          inputTitle = '';
+          inputDesc = '';
+
+          dispatch("goalSaved", true);
+      } catch (err) {
+          console.log(err);
+      }
+  }
+
+  async function addGoal() {
+      try {
+          await userData.sendData({
+              type: "goal",
+              data: {
+                  id: id,
+                  title: inputTitle.toUpperCase(),
+                  desc: inputDesc ? inputDesc : "",
+                  type: timeSlot,
+                  isCompleted: false,
+                  isFailed: false,
+                  started: Date.now(),
+                  compDate: completionDate,
+                  itemLabel: displayedDate,
+              },
+          })
+
+          inputTitle = '';
+          inputDesc = '';
+
+          dispatch("goalSaved", true);
+      } catch (err) {
+          console.warn(err);
+      }
+  }
+
+  $:bgColor = timeSlot ? `bg-theme-${timeSlot}`: 'bg-violet-400'
 
 </script>
 
-<div 
+<section 
 class="
 component-box 
 relative h-1/2
@@ -99,7 +99,7 @@ overflow-visible
     flex
     flex-col
     h-full
-    {isRequest ? 'bg-violet-400 rounded-2xl mb-2 md:rounded-2xl mb-2    sm:landscape:rounded-2xl rounded-br-2xl mb-2 shadow-[.5rem_0rem_2rem_rgba(0,0,0,0.25)]': `${bgColor} shadow-lg shadow-zinc-500 rounded-b-2xl    md:rounded-s-none  rounded-s-none mb-0    sm:landscape:rounded-tr-2xl rounded-s-none rounded-br-none mb-0`
+    {isRequest ? 'bg-violet-400 rounded-2xl mb-2 md:rounded-2xl mb-2    sm:landscape:rounded-2xl rounded-br-2xl mb-2 shadow-[.5rem_0rem_2rem_rgba(0,0,0,0.25)]': `${bgColor} shadow-lg shadow-zinc-500 rounded-b-2xl    md:rounded-s-none  rounded-s-none mb-0 sm:landscape:rounded-tr-2xl rounded-s-none rounded-br-none mb-0`
     }
     " on:submit|preventDefault>
         <input
@@ -115,7 +115,10 @@ overflow-visible
         rounded-none 
         placeholder:text-gray-200 
         focus:bg-slate-100/10 
-        focus:border-violet-600 outline-none shadow-md shadow-white/50"
+        focus:border-violet-600 
+        outline-none 
+        shadow-md 
+        shadow-white/50"
         type="text"
         placeholder="{ isRequest ? "My request Title" : "My Goal Title" }"
         bind:value={inputTitle}
@@ -169,18 +172,19 @@ overflow-visible
     self-center
     hover:text-white
     hover:bg-indigo-500
-    {!isRequest ? ' rounded-b-2xl md:w-[200%] sm:landscape:w-[200%]  md:-translate-x-[25%] sm:landscape:-translate-x-[25%]' : 'rounded-2xl  md:rounded-2xl    md:shadow-[0rem_.8rem_2rem_rgba(0,0,0,0.25)]    md:hover:shadow-[0rem_.5rem_1.5rem_rgba(0,0,0,0.25)] md:ml-0.5 sm:landscape:ml-0.5  sm:landscape:rounded-none   sm:landscape:rounded-2xl   sm:landscape:shadow-[0rem_.8rem_2rem_rgba(0,0,0,0.25)] sm:landscape:hover:shadow-[0rem_.5rem_1.5rem_rgba(0,0,0,0.25)]'}"
+    {!isRequest ? ' rounded-b-2xl md:w-[200%] sm:landscape:w-[200%]  md:-translate-x-[25%] sm:landscape:-translate-x-[25%]' : 'rounded-2xl  md:rounded-2xl    md:shadow-[0rem_.8rem_2rem_rgba(0,0,0,0.25)]    md:hover:shadow-[0rem_.5rem_1.5rem_rgba(0,0,0,0.25)] md:ml-0.5 sm:landscape:ml-0.5  sm:landscape:rounded-none   sm:landscape:rounded-2xl sm:landscape:shadow-[0rem_.8rem_2rem_rgba(0,0,0,0.25)] sm:landscape:hover:shadow-[0rem_.5rem_1.5rem_rgba(0,0,0,0.25)]'}"
     on:mousedown="{handleActions}"
     >
     { isRequest ? "send" : "save" }
     </button>
-</div>
+</section>
 <Dialog
 show="{errorMessage}"
 errorMessage="{errorMessage}"
 on:close="{closeDialog}"
 action={errorMessage ? 'add':''}
-></Dialog>
+>
+</Dialog>
   
 <style lang="scss" >
 </style>

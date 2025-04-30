@@ -9,8 +9,7 @@
   export let dashboardView, newItemOpen;
   export let userIsAdmin = false;
   export let maxItemsReached = false;
-  export let currTimeSlot; 
-
+  // export let currTimeSlot; 
 
   const dispatch = createEventDispatcher();
 
@@ -44,7 +43,6 @@
       }, []);
   }
   let secondaryOptionSelected = 'all';
-
   let userGoals;
   
   $: {
@@ -96,13 +94,7 @@
 
 
   $: itemsArray = requestsView || userIsAdmin ? filteredRequests : filteredGoals;
-  
-  //NEED TO ASSIGN PRIMARY OPTION ONLY IF NEW ITEM CARD EMITS NEW TIME SLOT
-  // $:{
-  //   if(currTimeSlot !== primaryOptionSelected) primaryOptionSelected = currTimeSlot;
-  //   console.log(primaryOptionSelected);
-  // }
-
+ 
   $:{
     if(itemsArray.length >= 10) {maxItemsReached = true}else{
       maxItemsReached = false
@@ -208,19 +200,16 @@
 
   $: userStats = computeUserStats($userData);
 
-
-
   //  FUNCTION FOR EXPIRED GOALS OR CHANGING REQUEST STATUS (ADMIN ONLY)
   function handleMarkedItems(item) {
 
-  const id = item.itemId;
-  const itemIndex = selectedItems.findIndex((itm) => itm.itemId === id);
+    const id = item.itemId;
+    const itemIndex = selectedItems.findIndex((itm) => itm.itemId === id);
 
-  itemIndex >= 0
-    ? (selectedItems[itemIndex] = item)
-    : selectedItems.push(item);
+    itemIndex >= 0
+      ? (selectedItems[itemIndex] = item)
+      : selectedItems.push(item);
   }
-  
 
   $:currItemsLength = itemsArray.length;
   let itemsBoolArr= new Array(currItemsLength).fill(false);
@@ -236,84 +225,79 @@
       itemsBoolArr[itemIndex] = false
      }else{
       selectedItems.push(item);
-      // itemsBoolArr.push(true)
       itemsBoolArr[itemIndex] = true
-
     } 
 
     console.log(selectedItems);
   }
 
-let userIsConfirming = false;
+  let userIsConfirming = false;
 
-function toggleListEdit() {
-  userIsEditing = !userIsEditing;
-  selectedItems = [];
-  itemsBoolArr = [];
-  if (!userIsAdmin) userIsDeleting = true;
-}
-
-let allSelectedFlag = false;
-
-
-function selectAll() {
-  const allSelected = itemsArray.map((item) => {
-    return { userId: item.userId, id: item.databaseId };
-  });
-
-  const newBoolArr = new Array(itemsArray.length).fill(true)
-
-  if (!allSelectedFlag && selectedItems.length === 0) {
-    itemsBoolArr = newBoolArr;
-    selectedItems = allSelected;
-    allSelectedFlag = true;
-  } else {
-    itemsBoolArr = [];
+  function toggleListEdit() {
+    userIsEditing = !userIsEditing;
     selectedItems = [];
-    allSelectedFlag = false;
+    itemsBoolArr = [];
+    if (!userIsAdmin) userIsDeleting = true;
   }
-}
 
-function sendMarkedReqs() {
-  userData.changeReqState(selectedItems)
-  userIsEditing = false;
-}
-  
-function handleListEdit(e) {
-  const targetButton = e.target.dataset.buttonId;
-  switch (targetButton) {
-    case "edit":
-      toggleListEdit();
-      break;
-    case "remove":
-      userIsDeleting = !userIsDeleting;
-      break;
-    case "select-all":
-      selectAll();
-      break;
-    case "confirm":
-      userIsConfirming = true;
-      break;
-    case "save-change":
-      sendMarkedReqs();
-      break;
-    default:
-      userIsEditing = false;
-      return;
+  let allSelectedFlag = false;
+
+  function selectAll() {
+    const allSelected = itemsArray.map((item) => {
+      return { userId: item.userId, id: item.databaseId };
+    });
+
+    const newBoolArr = new Array(itemsArray.length).fill(true)
+
+    if (!allSelectedFlag && selectedItems.length === 0) {
+      itemsBoolArr = newBoolArr;
+      selectedItems = allSelected;
+      allSelectedFlag = true;
+    } else {
+      itemsBoolArr = [];
+      selectedItems = [];
+      allSelectedFlag = false;
+    }
   }
-}
+
+  function sendMarkedReqs() {
+    userData.changeReqState(selectedItems)
+    userIsEditing = false;
+  }
+    
+  function handleListEdit(e) {
+    const targetButton = e.target.dataset.buttonId;
+    switch (targetButton) {
+      case "edit":
+        toggleListEdit();
+        break;
+      case "remove":
+        userIsDeleting = !userIsDeleting;
+        break;
+      case "select-all":
+        selectAll();
+        break;
+      case "confirm":
+        userIsConfirming = true;
+        break;
+      case "save-change":
+        sendMarkedReqs();
+        break;
+      default:
+        userIsEditing = false;
+        return;
+    }
+  }
 
   let errorMessage = '';
 
   let timer;
   let itemTimeInc = 0;
 
- onMount(() => {
-
-  requestsView || userIsAdmin
-    ? (primaryOptionSelected = "pending")
-    : (primaryOptionSelected = "all goals");
-
+  onMount(() => {
+    requestsView || userIsAdmin
+      ? (primaryOptionSelected = "pending")
+      : (primaryOptionSelected = "all goals");
   });
 
   onDestroy(() => {
@@ -324,7 +308,7 @@ function handleListEdit(e) {
 <section class="flex relative 
 origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
   <div class=" flex flex-col w-full h-full justify-between p-2">
-    <section class=" flex items-center relative mb-4 overflow-visible " role="" aria-label="filters"  on:click={handleTopControls} on:keydown={handleTopControls}>
+    <section class="flex items-center relative mb-4 overflow-visible " role="" aria-label="list filters"  on:click={handleTopControls} on:keyup={handleTopControls}>
       <div class="flex items-center overflow-visible">
         <div 
         class="
@@ -356,7 +340,7 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
           selector__option--selected 
           rounded-xl" inert 
           >
-          {primaryOptionSelected}
+            {primaryOptionSelected}
           </button>
           <img class=" {primaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="{arrowUrl}" alt="" inert>
           {#if primaryFilterToggle}
@@ -375,104 +359,103 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
               shadow-stone-800/80 rounded-lg"
             >
               {#each primaryFilterOptions as option }
-              <li
-                class="text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg selector__option selector__option--primary  "
-              >
-                {option}
-              </li>
+                <li
+                  class="text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg selector__option selector__option--primary  "
+                >
+                  {option}
+                </li>
               {/each}
             </ul>
           {/if}
-    
         </div>
         {#if secondaryFilterOptions.length >1 }
-        <div
-          class="selector  cursor-pointer rounded-xl bg-white  ml-2 overflow-visible flex justify-center items-center relative  shadow-md z-10
-        shadow-zinc-400/80 selector--secondary dropdown dropdown-start"
-        >
-        <button class="selector__option selector__option--selected  h-20 text-4xl py-3 px-4 font-semibold  hover:border-indigo-600 rounded-lg" inert> 
-          {secondaryOptionSelected}
-        </button>
-        <img class="{secondaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="{arrowUrl}" inert>
-        {#if secondaryFilterToggle}
-          <ul
-            class="selector__list selector__list--secondary absolute top-20 w-max left-0 mt-1 bg-transparent  divide-y shadow-2xl shadow-stone-800/80 rounded-lg max-h-[24rem] overflow-y-auto scrollbar-thin scrollbar-thumb-[rgba(98, 37, 253,1)] scrollbar-track-[rgba(95, 3, 255, 0)] {secondaryFilterOptions.length > 6 ? 'overflowing': ''}"
-            
+          <div
+            class="selector  cursor-pointer rounded-xl bg-white  ml-2 overflow-visible flex justify-center items-center relative  shadow-md z-10
+          shadow-zinc-400/80 selector--secondary dropdown dropdown-start"
           >
-            <li class="selector__option selector__option--secondary text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg ">all</li>
-            {#each secondaryFilterOptions as option}
-              <li
-                class="selector__option selector__option--secondary text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg"
+            <button class="selector__option selector__option--selected  h-20 text-4xl py-3 px-4 font-semibold  hover:border-indigo-600 rounded-lg" inert> 
+              {secondaryOptionSelected}
+            </button>
+            <img class="{secondaryFilterToggle ? 'rotate-180' : ''} transition duration-300 block self-center w-8 h-8 mx-2" src="{arrowUrl}" inert>
+            {#if secondaryFilterToggle}
+              <ul
+                class="selector__list selector__list--secondary absolute top-20 w-max left-0 mt-1 bg-transparent  divide-y shadow-2xl shadow-stone-800/80 rounded-lg max-h-[24rem] overflow-y-auto scrollbar-thin scrollbar-thumb-[rgba(98, 37, 253,1)] scrollbar-track-[rgba(95, 3, 255, 0)] {secondaryFilterOptions.length > 6 ? 'overflowing': ''}"
+                
               >
-                {option}
-              </li>
-            {/each}
-          </ul>
-        {/if}
-
-        </div>
+                <li class="selector__option selector__option--secondary text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg ">all</li>
+                {#each secondaryFilterOptions as option}
+                  <li
+                    class="selector__option selector__option--secondary text-4xl font-normal text-zinc-800 pb-4 p-2 px-4 cursor-pointer text-center bg-white transition-all hover:text-white hover:bg-indigo-500 hover:shadow-lg  last:hover:shadow-[0rem_-.5rem_1rem_rgba(0,0,0,0.1)] shadow-stone-800 hover:rounded-lg"
+                  >
+                    {option}
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+          </div>
         {/if}
       </div>
       {#if !userIsAdmin && !requestsView}
         <button
-          type="button"
-          class="
-          btn 
-          h-20 
-          rounded-xl 
-          text-4xl
-          font-normal
-          text-info
-          btn-xl
-          bg-white 
-          btn--stats 
-          ml-2 
-          shadow-md 
-          shadow-zinc-400/80"
+        type="button"
+        class="
+        btn 
+        h-20 
+        rounded-xl 
+        text-4xl
+        font-normal
+        text-info
+        btn-xl
+        bg-white 
+        btn--stats 
+        ml-2 
+        shadow-md 
+        shadow-zinc-400/80"
         >
           stats
         </button>
       {/if}
     </section>
-    <section class="dashboard__list scrollbar-gutter bg-white rounded-3xl shadow-xl
-    overflow-y-scroll  scrollbar-thin  md:pt-4 pt-8 p-2 h-full relative scrollbar-thumb-[rgba(0,0,0,0)] scrollbar-track-[rgba(0,0,0,0)]  ">
+    <section aria-label="items list" class="dashboard__list scrollbar-gutter bg-white rounded-3xl shadow-xl overflow-y-scroll scrollbar-thin  md:pt-4 pt-8 p-2 h-full relative scrollbar-thumb-[rgba(0,0,0,0)] scrollbar-track-[rgba(0,0,0,0)] transition-all duration-800"
+    >
       {#if !itemsArray.length}
         <div class="flex flex-col justify-center align-center h-full  ">
           {#if !userIsAdding}
             <h2 class="text-6xl leading-normal vertical-center m-auto">
-            {requestsView || userIsAdmin ? "No requests here!"
-                  : "No goals here!" }
+            {requestsView || userIsAdmin ? "Report any bug or suggestion!"
+            : "No goals here!" }
             </h2>
           {/if}
         </div>
-        {:else if itemsArray}
-          <ul 
-          class="
-          relative 
-          gap-4 
-          overflow-visible
-          grid 
-          md:grid-cols-2 
-          lg:grid-cols-3 
-          xl:grid-cols-4 
-          duration-700 
-          {statsToggled && !requestsView ? 'brightness-50 blur-3':''}" >
-            {#each itemsArray as item,idx}
-              <li  class="overflow-visible">
-                <Item
-                  item="{item}"
-                  isAdmin={userIsAdmin}
-                  isRequest="{requestsView || userIsAdmin}"
-                  userIsEditing="{userIsEditing}"
-                  timeInc="{itemTimeInc}"
-                  on:sendMarkedItem="{(e) => handleMarkedItems(e.detail)}"
-                  on:sendReply="{(e) => {
-                    userIsEditing = e.detail.isReply;
-                    handleMarkedItems(e.detail.request);
-                  }}"
-                >
+      {:else if itemsArray}
+        <ul 
+        class="
+        relative 
+        gap-4 
+        overflow-visible
+        grid 
+        md:grid-cols-2 
+        lg:grid-cols-3 
+        xl:grid-cols-4 
+        duration-700 
+        {statsToggled && !requestsView ? 'brightness-50 blur-3':''}" 
+        >
+          {#each itemsArray as item,idx}
+            <li  class="overflow-visible">
+              <Item
+                item="{item}"
+                isAdmin={userIsAdmin}
+                isRequest="{requestsView || userIsAdmin}"
+                userIsEditing="{userIsEditing}"
+                timeInc="{itemTimeInc}"
+                on:sendMarkedItem="{(e) => handleMarkedItems(e.detail)}"
+                on:sendReply="{(e) => {
+                  userIsEditing = e.detail.isReply;
+                  handleMarkedItems(e.detail.request);
+                }}"
+              >
                 <div slot="selector" >
-                    {#if userIsEditing && userIsDeleting}
+                  {#if userIsEditing && userIsDeleting}
                     <input
                       class="
                       absolute
@@ -490,23 +473,23 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
                       checked:brightness-150
                       checked:z-300
                       "
-                     
+                    
                       type="checkbox"
                       name="{item.id}"
                       checked={itemsBoolArr[idx]}
                       on:click={()=>handleSelected({ userId: item.userId,
                         id: item.databaseId})}
                     />
-                    {/if}
-                  </div>
-                </Item>
-              </li>
-            {/each}
-          </ul>
+                  {/if}
+                </div>
+              </Item>
+            </li>
+          {/each}
+        </ul>
       {/if}
     </section>
-  
-    <section class="flex relative justify-end w-full p-4 overflow-visible" role="" aria-label="list controls" on:click={handleListEdit} on:keydown={handleListEdit} >
+    <section class="flex relative justify-end w-full p-4 overflow-visible" role="" aria-label="list controls" on:click={handleListEdit} on:keyup={handleListEdit} 
+    >
       {#if userIsEditing && userIsAdmin && !userIsDeleting}
          <button
           type="button"
@@ -553,39 +536,35 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
         </button>
       {/if}
     </section>
-    
   </div>
   <section
   class="
- 
   flex 
   flex-col 
   items-center 
   justify-center 
-  absolute 
-  right-4
+  absolute
+  right-2
   top-[6.5rem] 
+  h-[calc(95.2%-3rem)]
   bg-white 
   rounded-3xl 
   transition-all 
   duration-700 
   transform-origin-right 
-  {statsToggled && !requestsView ? 'w-[98%]':'w-0 opacity-0'} 
-  h-[91%]
-   
-  md:h-[83%] 
   shadow-md 
-  shadow-[0rem_.0rem_1rem_rgba(0,0,0,0.5)]
-  overflow-visible"
+  shadow-[0rem_.0rem_1rem_rgba(0,0,0,0.6)]
+  overflow-visible
+  {statsToggled && !requestsView ? 'w-[calc(100%-1rem)]':'w-0 opacity-0'} 
+  "
+  aria-label="statistics"
   >
-    <h2 class="text-left min-h-max min-w-full w-full ml-40 mt-8 text-6xl text-zinc-900 font-semibold leading-normal">My progress</h2>
     <div 
     class="
     w-[90%] 
     max-w-[65rem] 
-    h-full
+    h-[80%]
     min-h-[80%]
-    m-20
     justify-items-center 
     items-center 
     justify-center 
@@ -602,7 +581,7 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
       <div class="stat border m-auto size-full  bg-indigo-400 shadow-lg shadow-zinc-400 text-white rounded-3xl ">
         <div class="stat-title leading-normal text-5xl text-inherit font-semibold">All time goals</div>
         <div class="stat-value text-5xl">{$userData.userGoals.length}</div>
-        <div class="stat-desc whitespace-pre-line  text-4xl text-inherit font-semibold">21% more than last month</div>
+        <div class="stat-desc whitespace-pre-line text-4xl text-inherit font-semibold">21% more than last month</div>
       </div>
       <div class="stat m-auto size-full bg-fuchsia-300 shadow-lg shadow-zinc-400 rounded-3xl ">
         <div class="stat-title leading-normal text-5xl font-semibold">Ongoing goals</div>
@@ -624,23 +603,21 @@ origin-top duration-700 {newItemOpen ? 'h-0':'grow flex-1'} " >
       </div>
     </div>
   </section>
-  <Dialog
-    show={userIsConfirming || errorMessage}
-    errorMessage=
-    {  errorMessage ||
-      (selectedItems.length >= 1
-        ? `Once they're gone,\nthey're gone`
-        : `You need to have at least one selected`)}
-    
-    submitText={errorMessage ? 'click outside' : `delete`}
-    allConfirmed={selectedItems.length}
-    action={userIsConfirming ? 'delete' : ''}
-    on:confirmAction={deleteItems}
-    on:close={() => {errorMessage = '';userIsConfirming = false; }}
-  >
-  </Dialog>
 </section>
-
+<Dialog
+  show={userIsConfirming || errorMessage}
+  errorMessage=
+  {  errorMessage ||
+    (selectedItems.length >= 1
+      ? `Once they're gone,\nthey're gone`
+      : `You need to have at least one selected`)}
+  
+  submitText={errorMessage ? 'click outside' : `delete`}
+  allConfirmed={selectedItems.length}
+  action={userIsConfirming ? 'delete' : ''}
+  on:confirmAction={deleteItems}
+  on:close={() => {errorMessage = '';userIsConfirming = false; }}
+/>
 
 <style lang="scss">
   .scrollbar-gutter{

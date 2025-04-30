@@ -100,6 +100,7 @@
 
 <div 
 class="
+card
 flex
 flex-col 
 relative 
@@ -110,40 +111,48 @@ p-2
 rounded-3xl 
 shadow-md 
 shadow-zinc-400/80 
-bg-[var(--theme-primary-light)] card {bgColor}" >
-    <section class="card-title">
-      <h2 class=" px-6 pb-2 my-2 text-white text-5xl leading-tight " >
-        {
-          item.title[0].toUpperCase() +
-          item.title.slice(1).toLowerCase()
-        }
-      </h2>
-      {#if item.type}
-      <div class="badge badge-primary self-center absolute right-2 top-2 text-xl p-4 tracking-wide rounded-2xl">{item.type}</div>
-      {/if}
-    </section>
-    <section class="flex flex-col text-5xl text-clip">
-      {#if item.desc}
+bg-[var(--theme-primary-light)]
+{bgColor}" 
+>
+  <section class="card-title">
+    <h2 class=" px-6 pb-2 my-2 text-white text-5xl leading-tight " >
+      {
+        item.title[0].toUpperCase() +
+        item.title.slice(1).toLowerCase()
+      }
+    </h2>
+    {#if item.type}
+      <div class="badge badge-primary self-center absolute right-2 top-2 text-xl p-4 tracking-wide rounded-2xl"
+      >
+        {item.type}
+      </div>
+    {/if}
+  </section>
+  <section class="flex flex-col text-5xl text-clip">
+    {#if item.desc}
       <p class="text-4xl font-semibold border-b border-b-slate-100 self-center w-[90%] py-2 pt-4 pb-4 text-gray-200" >
         {
           item.desc[0].toUpperCase() +
           item.desc.slice(1).toLowerCase()
         }
       </p>
-      {/if}
-      <div class=" flex self-center relative w-max my-2 pt-2 text-center bg-transparent">
-        <h3 class="text-3xl font-bold leading-normal">
-          <span class=" text-white">{
-            isRequest ? "Status: " : ""
-          }</span>
-          <span class=" text-violet-600 badge text-2xl h-8">
-            {item.itemLabel }
-          </span>
-        </h3>
-      </div>
-      {#if isRequest}
-      <div class="self-center w-max overflow-visible border-t-2 border-t-white mb-4 text-center relative text-3xl " >
-        <span class=" text-blue-600 text-3xl font-semibold block mt-4 relative">Admin says:</span>
+    {/if}
+    <div class=" flex self-center relative w-max my-2 pt-2 text-center bg-transparent">
+      <h3 class="text-3xl font-bold leading-normal">
+        <span class=" text-white">{
+          isRequest ? "Status: " : ""
+        }</span>
+        <span class=" text-violet-600 badge text-2xl h-8">
+          {item.itemLabel }
+        </span>
+      </h3>
+    </div>
+    {#if isRequest}
+      <div class="self-center w-max overflow-visible border-t-2 border-t-white mb-4 text-center relative text-3xl " 
+      >
+        <span class=" text-blue-600 text-3xl font-semibold block mt-4 relative">
+          Admin says:
+        </span>
         {#if isAdmin && userIsEditing }
           <button
             type="button"
@@ -153,29 +162,31 @@ bg-[var(--theme-primary-light)] card {bgColor}" >
             {item.reply ? "change reply" : "add reply" }
           </button>
         {/if}
-        <p class=" text-3xl font-semibold text-white">{ item.reply || "no reply yet" }</p>
+        <p class=" text-3xl font-semibold text-white">
+          { item.reply || "no reply yet" }
+        </p>
       </div>
-      {/if}
-
-      {#if isAdmin && userIsEditing && adminIsReplying}
-        <textarea
-          name="amdin-reply"
-          class="text-center w-full mb-2 text-3xl font-semibold bg-transparent text-white rounded-xl border-2 border-white focus:border-fuchsia-600 focus:outline-none
-          resize-none"
-          rows="3"
-          cols="60"
-          bind:value={requestReply}
-        ></textarea>
-      {/if}
-      {#if isProgressVisible && !isRequest }
+    {/if}
+    {#if isAdmin && userIsEditing && adminIsReplying}
+      <textarea
+        name="amdin-reply"
+        class="text-center w-full mb-2 text-3xl font-semibold bg-transparent text-white rounded-xl border-2 border-white focus:border-fuchsia-600 focus:outline-none
+        resize-none"
+        rows="3"
+        cols="60"
+        bind:value={requestReply}
+      >
+      </textarea>
+    {/if}
+    {#if isProgressVisible && !isRequest}
       <progress class="progress text-white self-center  w-56 " value="{+compRate(item.started, item.compDate).slice(0,-1)}" max="100"> 
       </progress>
       <span class="text-white self-center mt-2 text-3xl font-semibold ">
         { timeLeft }
       </span>
-      {/if}
-    </section>
-    {#if hasExpired  || (isAdmin && userIsEditing) }
+    {/if}
+  </section>
+  {#if hasExpired  || (isAdmin && userIsEditing) }
     <section
       class="items-center"
     >
@@ -190,24 +201,22 @@ bg-[var(--theme-primary-light)] card {bgColor}" >
             on:click="{markAs}"
           >
           {isAdmin ? "accepted" : "completed"}
-
         </button>
-          <button
-            type="button"
-            data-button-id="failed"
-            class="flex-auto w-max border-2 rounded-lg px-4 p-1 duration-200 hover:bg-rose-700 hover:border-rose-700 {!goalStatus && markFlag ? 'bg-rose-600 border-rose-600' : ''}"
-            on:click="{markAs}"
-          >
+        <button
+          type="button"
+          data-button-id="failed"
+          class="flex-auto w-max border-2 rounded-lg px-4 p-1 duration-200 hover:bg-rose-700 hover:border-rose-700 {!goalStatus && markFlag ? 'bg-rose-600 border-rose-600' : ''}"
+          on:click="{markAs}"
+        >
           {isAdmin ? "rejected" : "failed"}
         </button>
         </div>
       </div>
     </section>
-    {/if}
-    <div>
-      <slot name="selector"></slot>
-    </div>
+  {/if}
+  <div>
+    <slot name="selector"></slot>
+  </div>
 </div>
 
-<style lang="scss" >
-</style>
+<style lang="scss"></style>

@@ -53,16 +53,6 @@ body {
   --checkbox-checked: to bottom right, rgba(255, 4, 17, 0.7), transparent 70%;
 }
 
-@media screen and (min-width: 64rem) {
-  html {
-    font-size: 62.5%;
-  }
-}
-@media screen and (min-width: 48rem) {
-  html {
-    font-size: 55%;
-  }
-}
 @media screen and (min-width: 40rem) {
   html {
     font-size: 50%;
